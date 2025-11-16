@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: afrifund-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: afrifund
+      POSTGRES_PASSWORD: afrifund_password
+      POSTGRES_DB: afrifund
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - afrifund-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: afrifund-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - afrifund-network
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: afrifund-backend
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://afrifund:afrifund_password@postgres:5432/afrifund?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key}
+      JWT_EXPIRES_IN: 7d
+      FRONTEND_URL: http://localhost:3000
+      PLATFORM_FEE_PERCENTAGE: 3.0
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - afrifund-network
+    volumes:
+      - ../backend:/app
+      - /app/node_modules
+      - certificates:/app/public/certificates
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: afrifund-frontend
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    depends_on:
+      - backend
+    networks:
+      - afrifund-network
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+      - /app/.next
+
+volumes:
+  postgres_data:
+  redis_data:
+  certificates:
+
+networks:
+  afrifund-network:
+    driver: bridge
