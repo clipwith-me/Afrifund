@@ -1,0 +1,427 @@
+// AfriFund Database Schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum UserRole {
+  CREATOR
+  BACKER
+  MENTOR
+  ADMIN
+}
+
+enum KYCStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CampaignStatus {
+  DRAFT
+  PENDING_APPROVAL
+  ACTIVE
+  FUNDED
+  CLOSED
+  REJECTED
+}
+
+enum PledgeStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  FLUTTERWAVE
+  PAYSTACK
+  MPESA
+  MOCK
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum NotificationType {
+  CAMPAIGN_CREATED
+  CAMPAIGN_APPROVED
+  CAMPAIGN_FUNDED
+  PLEDGE_RECEIVED
+  MENTOR_JOINED
+  MENTOR_SESSION_COMPLETED
+  CERTIFICATE_ISSUED
+}
+
+enum IDType {
+  NATIONAL_ID
+  PASSPORT
+  DRIVERS_LICENSE
+  VOTERS_CARD
+}
+
+// ============================================================================
+// USER MANAGEMENT
+// ============================================================================
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  phone         String?  @unique
+  password      String
+  firstName     String
+  lastName      String
+  avatar        String?
+  role          UserRole @default(BACKER)
+  isActive      Boolean  @default(true)
+  isVerified    Boolean  @default(false)
+  lastLoginAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  kyc                KYC?
+  campaigns          Campaign[]
+  pledges            Pledge[]
+  certificates       Certificate[]
+  mentorProfile      Mentor?
+  notifications      Notification[]
+  paymentTransactions PaymentTransaction[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+// ============================================================================
+// KYC (Know Your Customer)
+// ============================================================================
+
+model KYC {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fullName        String
+  dateOfBirth     DateTime
+  idType          IDType
+  idNumber        String
+  idDocument      String?   // URL to uploaded ID document
+  address         String?
+  city            String?
+  country         String
+  postalCode      String?
+
+  status          KYCStatus @default(PENDING)
+  reviewedBy      String?
+  reviewedAt      DateTime?
+  rejectionReason String?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("kyc")
+}
+
+// ============================================================================
+// CAMPAIGNS
+// ============================================================================
+
+model Campaign {
+  id              String         @id @default(cuid())
+  creatorId       String
+  creator         User           @relation(fields: [creatorId], references: [id])
+
+  title           String
+  slug            String         @unique
+  description     String
+  shortDescription String
+  category        String
+  location        String         // City, Country in Africa
+  country         String
+
+  targetAmount    Decimal        @db.Decimal(15, 2)
+  amountRaised    Decimal        @default(0) @db.Decimal(15, 2)
+  currency        String         @default("USD")
+
+  startDate       DateTime
+  endDate         DateTime
+
+  status          CampaignStatus @default(DRAFT)
+  approvedBy      String?
+  approvedAt      DateTime?
+  rejectionReason String?
+
+  featuredImage   String?
+  videoUrl        String?
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relations
+  media           CampaignMedia[]
+  pledges         Pledge[]
+  mentorSessions  MentorSession[]
+
+  @@index([creatorId])
+  @@index([status])
+  @@index([category])
+  @@index([country])
+  @@index([slug])
+  @@map("campaigns")
+}
+
+model CampaignMedia {
+  id          String   @id @default(cuid())
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  type        String   // image, video
+  url         String
+  caption     String?
+  order       Int      @default(0)
+
+  createdAt   DateTime @default(now())
+
+  @@index([campaignId])
+  @@map("campaign_media")
+}
+
+// ============================================================================
+// PLEDGES & PAYMENTS
+// ============================================================================
+
+model Pledge {
+  id                    String              @id @default(cuid())
+  campaignId            String
+  campaign              Campaign            @relation(fields: [campaignId], references: [id])
+  backerId              String
+  backer                User                @relation(fields: [backerId], references: [id])
+
+  amount                Decimal             @db.Decimal(15, 2)
+  currency              String              @default("USD")
+  platformFee           Decimal             @db.Decimal(15, 2)
+  netAmount             Decimal             @db.Decimal(15, 2)
+
+  status                PledgeStatus        @default(PENDING)
+  message               String?
+  isAnonymous           Boolean             @default(false)
+
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  completedAt           DateTime?
+
+  // Relations
+  paymentTransaction    PaymentTransaction?
+  certificate           Certificate?
+  platformRevenue       PlatformRevenue?
+
+  @@index([campaignId])
+  @@index([backerId])
+  @@index([status])
+  @@map("pledges")
+}
+
+model PaymentTransaction {
+  id                String         @id @default(cuid())
+  pledgeId          String         @unique
+  pledge            Pledge         @relation(fields: [pledgeId], references: [id])
+  userId            String
+  user              User           @relation(fields: [userId], references: [id])
+
+  provider          PaymentProvider
+  providerTxId      String?        @unique
+  providerReference String?
+
+  amount            Decimal        @db.Decimal(15, 2)
+  currency          String
+  status            PaymentStatus  @default(PENDING)
+
+  paymentUrl        String?
+  webhookData       Json?
+  metadata          Json?
+
+  initiatedAt       DateTime       @default(now())
+  completedAt       DateTime?
+  failedAt          DateTime?
+  errorMessage      String?
+
+  @@index([pledgeId])
+  @@index([userId])
+  @@index([provider])
+  @@index([status])
+  @@index([providerTxId])
+  @@map("payment_transactions")
+}
+
+// ============================================================================
+// CERTIFICATES
+// ============================================================================
+
+model Certificate {
+  id              String   @id @default(cuid())
+  pledgeId        String   @unique
+  pledge          Pledge   @relation(fields: [pledgeId], references: [id])
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+
+  certificateNumber String @unique
+  donorName       String
+  campaignTitle   String
+  amount          Decimal  @db.Decimal(15, 2)
+  currency        String
+  contributionLevel String // Bronze, Silver, Gold, Platinum based on amount
+
+  pdfUrl          String
+  issuedAt        DateTime @default(now())
+
+  @@index([userId])
+  @@index([pledgeId])
+  @@index([certificateNumber])
+  @@map("certificates")
+}
+
+// ============================================================================
+// MENTORS & EQUITY LEDGER
+// ============================================================================
+
+model Mentor {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title           String   // Dr., Prof., Mr., Ms., etc.
+  expertise       String[] // Array of expertise areas
+  bio             String
+  company         String?
+  linkedinUrl     String?
+  yearsExperience Int
+
+  hourlyRate      Decimal? @db.Decimal(10, 2)
+  availableHours  Int      @default(0)
+  totalHours      Int      @default(0)
+  rating          Decimal? @db.Decimal(3, 2)
+
+  isActive        Boolean  @default(true)
+  approvedBy      String?
+  approvedAt      DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  sessions        MentorSession[]
+  ledgerEntries   MentorLedger[]
+
+  @@index([userId])
+  @@index([isActive])
+  @@map("mentors")
+}
+
+model MentorSession {
+  id              String   @id @default(cuid())
+  mentorId        String
+  mentor          Mentor   @relation(fields: [mentorId], references: [id])
+  campaignId      String
+  campaign        Campaign @relation(fields: [campaignId], references: [id])
+
+  title           String
+  description     String?
+  hoursSpent      Decimal  @db.Decimal(5, 2)
+  sessionDate     DateTime
+  notes           String?
+
+  equityAllocated Decimal  @db.Decimal(5, 4) // Percentage
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  ledgerEntry     MentorLedger?
+
+  @@index([mentorId])
+  @@index([campaignId])
+  @@map("mentor_sessions")
+}
+
+model MentorLedger {
+  id              String        @id @default(cuid())
+  mentorId        String
+  mentor          Mentor        @relation(fields: [mentorId], references: [id])
+  sessionId       String?       @unique
+  session         MentorSession? @relation(fields: [sessionId], references: [id])
+
+  campaignId      String
+  description     String
+  equityPercentage Decimal      @db.Decimal(5, 4)
+  vestingSchedule  String?      // JSON or simple string for future vesting
+
+  isVested        Boolean      @default(false)
+  vestedAt        DateTime?
+
+  createdAt       DateTime     @default(now())
+
+  @@index([mentorId])
+  @@index([sessionId])
+  @@map("mentor_ledger")
+}
+
+// ============================================================================
+// PLATFORM REVENUE
+// ============================================================================
+
+model PlatformRevenue {
+  id              String   @id @default(cuid())
+  pledgeId        String   @unique
+  pledge          Pledge   @relation(fields: [pledgeId], references: [id])
+
+  amount          Decimal  @db.Decimal(15, 2)
+  currency        String
+  feePercentage   Decimal  @db.Decimal(5, 2) // e.g., 3.00 for 3%
+
+  collectedAt     DateTime @default(now())
+
+  @@index([pledgeId])
+  @@map("platform_revenue")
+}
+
+// ============================================================================
+// NOTIFICATIONS
+// ============================================================================
+
+model Notification {
+  id          String           @id @default(cuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type        NotificationType
+  title       String
+  message     String
+  link        String?
+  metadata    Json?
+
+  isRead      Boolean          @default(false)
+  readAt      DateTime?
+
+  createdAt   DateTime         @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([type])
+  @@map("notifications")
+}
