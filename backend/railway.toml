@@ -1,0 +1,10 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm run start:prod"
+healthcheckPath = "/api/v1/campaigns"
+healthcheckTimeout = 300
+
+[env]
+NODE_ENV = "production"
