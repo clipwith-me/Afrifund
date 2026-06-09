@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AfriFund Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #2563eb; }
+        .status { color: #16a34a; font-weight: bold; }
+        a { color: #2563eb; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        ul { line-height: 1.8; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>✅ AfriFund Platform - Status</h1>
+        <p class="status">Both servers are running successfully!</p>
+
+        <h2>🔗 Test Links:</h2>
+        <ul>
+            <li><a href="/" target="_blank">Homepage</a></li>
+            <li><a href="/campaigns" target="_blank">Browse Campaigns</a></li>
+            <li><a href="/campaigns/solar-power-for-rural-communities" target="_blank">View Test Campaign</a></li>
+            <li><a href="/auth/login" target="_blank">Login Page</a></li>
+            <li><a href="/dashboard" target="_blank">Dashboard (requires login)</a></li>
+        </ul>
+
+        <h2>🔑 Test Accounts:</h2>
+        <ul>
+            <li><strong>Creator:</strong> test@afrifund.com / Test123!@#</li>
+            <li><strong>Backer:</strong> backer@afrifund.com / Backer123!@#</li>
+            <li><strong>Admin:</strong> admin@afrifund.com / Admin123!@#</li>
+        </ul>
+
+        <h2>📊 Backend API:</h2>
+        <p>Backend is running on port 3001</p>
+        <ul>
+            <li><a href="http://localhost:3001/api/v1/campaigns" target="_blank">API: Get Campaigns</a></li>
+        </ul>
+    </div>
+</body>
+</html>
