@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { formatCurrency } from '@/lib/utils/format';
-import { CreditCard, CheckCircle, XCircle } from 'lucide-react';
+import { CreditCard, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function MockPaymentPage() {
+function MockPaymentContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [processing, setProcessing] = useState(false);
@@ -140,5 +140,17 @@ export default function MockPaymentPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function MockPaymentPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <Loader2 className="h-16 w-16 animate-spin text-primary-600" />
+      </div>
+    }>
+      <MockPaymentContent />
+    </Suspense>
   );
 }
