@@ -8,6 +8,8 @@ interface User {
   lastName: string;
   role: string;
   isVerified: boolean;
+  phone?: string;
+  avatar?: string;
 }
 
 interface AuthState {
