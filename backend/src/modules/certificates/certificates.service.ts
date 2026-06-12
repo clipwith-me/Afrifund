@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -14,7 +14,7 @@ export class CertificatesService {
     private prisma: PrismaService,
     private config: ConfigService,
     private eventEmitter: EventEmitter2,
-    @InjectQueue('certificates') private certificateQueue: Queue,
+    @Optional() @InjectQueue('certificates') private certificateQueue?: Queue,
   ) {}
 
   async generate(pledgeId: string) {
