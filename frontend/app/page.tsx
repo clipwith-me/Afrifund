@@ -70,25 +70,6 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Stats */}
-            <div className="mt-16 grid grid-cols-2 gap-8 text-white md:grid-cols-4">
-              <div>
-                <div className="text-3xl font-bold sm:text-4xl">$2.5M+</div>
-                <div className="mt-1 text-sm text-gray-300 sm:text-base">Pledged</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold sm:text-4xl">150+</div>
-                <div className="mt-1 text-sm text-gray-300 sm:text-base">Projects funded</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold sm:text-4xl">5,000+</div>
-                <div className="mt-1 text-sm text-gray-300 sm:text-base">Backers</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold sm:text-4xl">25+</div>
-                <div className="mt-1 text-sm text-gray-300 sm:text-base">Countries</div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
