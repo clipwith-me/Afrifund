@@ -78,20 +78,20 @@ function PaymentCallbackContent() {
             )}
 
             <div className="flex flex-col gap-2">
-              <Link href="/dashboard" className="w-full">
-                <Button className="w-full">
+              <Button asChild>
+                <Link href="/dashboard">
                   <Home className="mr-2 h-4 w-4" />
                   Go to Dashboard
-                </Button>
-              </Link>
+                </Link>
+              </Button>
 
               {status === 'success' && (
-                <Link href="/certificates/my-certificates" className="w-full">
-                  <Button variant="outline" className="w-full">
+                <Button asChild variant="outline">
+                  <Link href="/certificates/my-certificates">
                     <FileText className="mr-2 h-4 w-4" />
                     View Certificates
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               )}
 
               {status === 'failed' && (
@@ -100,11 +100,11 @@ function PaymentCallbackContent() {
                 </Button>
               )}
 
-              <Link href="/campaigns" className="w-full">
-                <Button variant="ghost" className="w-full">
+              <Button asChild variant="ghost">
+                <Link href="/campaigns">
                   Browse More Campaigns
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </CardContent>
         )}

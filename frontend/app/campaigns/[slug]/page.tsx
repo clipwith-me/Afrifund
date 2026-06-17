@@ -421,16 +421,16 @@ export default function CampaignDetailPage() {
                       Campaign Management
                     </p>
                     <div className="space-y-2">
-                      <Link href={`/dashboard/campaigns/${campaign.id}/edit`}>
-                        <Button variant="outline" size="sm" className="w-full">
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={`/dashboard/campaigns/${campaign.id}/edit`}>
                           Edit Campaign
-                        </Button>
-                      </Link>
-                      <Link href={`/dashboard/campaigns/${campaign.id}`}>
-                        <Button variant="outline" size="sm" className="w-full">
+                        </Link>
+                      </Button>
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={`/dashboard/campaigns/${campaign.id}`}>
                           View Analytics
-                        </Button>
-                      </Link>
+                        </Link>
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
