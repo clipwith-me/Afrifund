@@ -350,25 +350,23 @@ export default function HomePage() {
             Start your campaign today or support an innovative project.
           </p>
           <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-            <Button
-              asChild
-              size="lg"
-              className="w-full bg-white px-8 py-6 text-lg text-primary-600 hover:bg-gray-100 sm:w-auto"
-            >
-              <Link href="/auth/register">
+            <Link href="/auth/register">
+              <Button
+                size="lg"
+                className="w-full bg-white px-8 py-6 text-lg text-primary-600 hover:bg-gray-100 sm:w-auto"
+              >
                 Start your campaign
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="w-full border-2 border-white bg-transparent px-8 py-6 text-lg text-white hover:bg-white/10 sm:w-auto"
-            >
-              <Link href="/campaigns">
+              </Button>
+            </Link>
+            <Link href="/campaigns">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full border-2 border-white bg-transparent px-8 py-6 text-lg text-white hover:bg-white/10 sm:w-auto"
+              >
                 Explore projects
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

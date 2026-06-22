@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import Link from 'next/link';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -154,9 +155,9 @@ export default function ProfilePage() {
               </p>
             </div>
             {!user?.isVerified && (
-              <Button variant="outline" size="sm" asChild>
-                <a href="/dashboard/kyc">Verify Now</a>
-              </Button>
+              <Link href="/dashboard/kyc">
+                <Button variant="outline" size="sm">Verify Now</Button>
+              </Link>
             )}
           </div>
         </CardContent>

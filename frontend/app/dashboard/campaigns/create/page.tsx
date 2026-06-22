@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -108,9 +109,9 @@ export default function CreateCampaignPage() {
             <p className="mt-2 text-yellow-700">
               You must complete KYC verification before creating a campaign
             </p>
-            <Button className="mt-6" asChild>
-              <a href="/dashboard/kyc">Complete KYC</a>
-            </Button>
+            <Link href="/dashboard/kyc">
+              <Button className="mt-6">Complete KYC</Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
