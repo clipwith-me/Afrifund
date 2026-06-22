@@ -90,11 +90,11 @@ export default function DashboardOverviewPage() {
               <p className="mt-1 text-sm text-yellow-700">
                 Complete your KYC verification to create campaigns and unlock all features
               </p>
-              <Button asChild size="sm" variant="outline" className="mt-3 border-yellow-600 text-yellow-700">
-                <Link href="/dashboard/kyc">
+              <Link href="/dashboard/kyc">
+                <Button size="sm" variant="outline" className="mt-3 border-yellow-600 text-yellow-700">
                   Verify Now
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>
@@ -177,12 +177,12 @@ export default function DashboardOverviewPage() {
               <CardTitle>My Campaigns</CardTitle>
               <CardDescription>Your recent fundraising campaigns</CardDescription>
             </div>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/dashboard/campaigns">
+            <Link href="/dashboard/campaigns">
+              <Button variant="ghost" size="sm">
                 View All
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             {campaigns.length > 0 ? (
@@ -233,12 +233,12 @@ export default function DashboardOverviewPage() {
                 <Briefcase className="mx-auto h-12 w-12 text-gray-300" />
                 <p className="mt-2 text-sm text-gray-600">No campaigns yet</p>
                 {user?.isVerified && (
-                  <Button asChild size="sm" className="mt-4">
-                    <Link href="/dashboard/campaigns/create">
+                  <Link href="/dashboard/campaigns/create">
+                    <Button size="sm" className="mt-4">
                       <Plus className="mr-2 h-4 w-4" />
                       Create Campaign
-                    </Link>
-                  </Button>
+                    </Button>
+                  </Link>
                 )}
               </div>
             )}
@@ -252,12 +252,12 @@ export default function DashboardOverviewPage() {
               <CardTitle>Recent Pledges</CardTitle>
               <CardDescription>Your recent contributions</CardDescription>
             </div>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/dashboard/pledges">
+            <Link href="/dashboard/pledges">
+              <Button variant="ghost" size="sm">
                 View All
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             {pledges.length > 0 ? (
@@ -295,11 +295,11 @@ export default function DashboardOverviewPage() {
               <div className="py-8 text-center">
                 <Heart className="mx-auto h-12 w-12 text-gray-300" />
                 <p className="mt-2 text-sm text-gray-600">No pledges yet</p>
-                <Button asChild size="sm" variant="outline" className="mt-4">
-                  <Link href="/campaigns">
+                <Link href="/campaigns">
+                  <Button size="sm" variant="outline" className="mt-4">
                     Browse Campaigns
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               </div>
             )}
           </CardContent>
@@ -314,12 +314,12 @@ export default function DashboardOverviewPage() {
               <CardTitle>Recent Certificates</CardTitle>
               <CardDescription>Your contribution certificates</CardDescription>
             </div>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/dashboard/certificates">
+            <Link href="/dashboard/certificates">
+              <Button variant="ghost" size="sm">
                 View All
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

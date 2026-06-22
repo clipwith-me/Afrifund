@@ -53,22 +53,21 @@ export default function HomePage() {
               Join a community of creators, backers, and mentors building the future.
             </p>
             <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-              <Button asChild size="lg" className="w-full bg-primary-600 px-8 py-6 text-lg hover:bg-primary-700 sm:w-auto">
-                <Link href="/campaigns">
+              <Link href="/campaigns">
+                <Button size="lg" className="w-full bg-primary-600 px-8 py-6 text-lg hover:bg-primary-700 sm:w-auto">
                   Explore projects
                   <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="w-full border-2 border-white bg-transparent px-8 py-6 text-lg text-white hover:bg-white hover:text-gray-900 sm:w-auto"
-              >
-                <Link href="/auth/register">
+                </Button>
+              </Link>
+              <Link href="/auth/register">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full border-2 border-white bg-transparent px-8 py-6 text-lg text-white hover:bg-white hover:text-gray-900 sm:w-auto"
+                >
                   Start a campaign
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </div>
 
           </div>
@@ -193,12 +192,12 @@ export default function HomePage() {
               <h2 className="text-3xl font-bold text-gray-900">Featured projects</h2>
               <p className="mt-2 text-gray-600">Discover innovative ideas from African creators</p>
             </div>
-            <Button asChild variant="ghost" className="group">
-              <Link href="/campaigns">
+            <Link href="/campaigns">
+              <Button variant="ghost" className="group">
                 See more
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
 
           {loading ? (
@@ -273,9 +272,9 @@ export default function HomePage() {
           ) : (
             <div className="mt-12 text-center">
               <p className="text-gray-500">No featured campaigns yet. Be the first to create one!</p>
-              <Button asChild className="mt-4">
-                <Link href="/auth/register">Start a campaign</Link>
-              </Button>
+              <Link href="/auth/register">
+                <Button className="mt-4">Start a campaign</Button>
+              </Link>
             </div>
           )}
         </div>

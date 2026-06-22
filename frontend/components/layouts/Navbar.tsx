@@ -47,12 +47,12 @@ export function Navbar() {
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
             {isAuthenticated ? (
               <>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/dashboard">
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm">
                     <User className="mr-2 h-4 w-4" />
                     Dashboard
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
                 <Button variant="outline" size="sm" onClick={logout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
@@ -60,14 +60,14 @@ export function Navbar() {
               </>
             ) : (
               <>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/auth/login">
+                <Link href="/auth/login">
+                  <Button variant="ghost" size="sm">
                     Login
-                  </Link>
-                </Button>
-                <Button asChild size="sm">
-                  <Link href="/auth/register">Get Started</Link>
-                </Button>
+                  </Button>
+                </Link>
+                <Link href="/auth/register">
+                  <Button size="sm">Get Started</Button>
+                </Link>
               </>
             )}
           </div>

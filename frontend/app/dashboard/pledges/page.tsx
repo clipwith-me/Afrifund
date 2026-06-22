@@ -222,20 +222,20 @@ export default function MyPledgesPage() {
 
                   {/* Actions */}
                   <div className="mt-4 flex gap-2 border-t pt-4">
-                    <Button asChild variant="outline" size="sm">
-                      <Link href={`/campaigns/${pledge.campaign.slug}`}>
+                    <Link href={`/campaigns/${pledge.campaign.slug}`}>
+                      <Button variant="outline" size="sm">
                         <ExternalLink className="mr-2 h-4 w-4" />
                         View Campaign
-                      </Link>
-                    </Button>
+                      </Button>
+                    </Link>
 
                     {pledge.certificate && (
-                      <Button asChild size="sm">
-                        <Link href={`/dashboard/certificates`}>
+                      <Link href={`/dashboard/certificates`}>
+                        <Button size="sm">
                           <FileText className="mr-2 h-4 w-4" />
                           View Certificate
-                        </Link>
-                      </Button>
+                        </Button>
+                      </Link>
                     )}
 
                     {pledge.status === 'COMPLETED' && !pledge.certificate && (
@@ -265,12 +265,12 @@ export default function MyPledgesPage() {
             <p className="mt-2 text-gray-600">
               Start supporting amazing campaigns from African innovators
             </p>
-            <Button asChild className="mt-6">
-              <Link href="/campaigns">
+            <Link href="/campaigns">
+              <Button className="mt-6">
                 <Heart className="mr-2 h-4 w-4" />
                 Browse Campaigns
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       )}

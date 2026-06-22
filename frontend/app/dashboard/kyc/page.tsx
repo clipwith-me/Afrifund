@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import Link from 'next/link';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -133,13 +134,13 @@ export default function KYCPage() {
 
             <div className="mt-8 space-y-2">
               {kycStatus.status === 'APPROVED' && (
-                <Button asChild>
-                  <a href="/dashboard/campaigns/create">Create Campaign</a>
-                </Button>
+                <Link href="/dashboard/campaigns/create">
+                  <Button className="w-full">Create Campaign</Button>
+                </Link>
               )}
-              <Button variant="outline" asChild>
-                <a href="/dashboard">Back to Dashboard</a>
-              </Button>
+              <Link href="/dashboard">
+                <Button variant="outline" className="w-full">Back to Dashboard</Button>
+              </Link>
             </div>
           </CardContent>
         </Card>
@@ -275,9 +276,9 @@ export default function KYCPage() {
 
             {/* Submit */}
             <div className="flex justify-end gap-3">
-              <Button variant="outline" type="button" asChild>
-                <a href="/dashboard">Cancel</a>
-              </Button>
+              <Link href="/dashboard">
+                <Button variant="outline" type="button">Cancel</Button>
+              </Link>
               <Button type="submit" loading={submitting}>
                 <FileText className="mr-2 h-4 w-4" />
                 Submit for Verification

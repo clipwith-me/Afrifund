@@ -38,9 +38,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <p className="mb-4 text-gray-600">Please login to access dashboard</p>
-          <Button asChild>
-            <Link href="/auth/login">Login</Link>
-          </Button>
+          <Link href="/auth/login">
+            <Button>Login</Button>
+          </Link>
         </div>
       </div>
     );
@@ -162,9 +162,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           <div className="flex items-center gap-4">
             {user.role === 'CREATOR' && (
-              <Button asChild size="sm">
-                <Link href="/dashboard/campaigns/create">Create Campaign</Link>
-              </Button>
+              <Link href="/dashboard/campaigns/create">
+                <Button size="sm">Create Campaign</Button>
+              </Link>
             )}
           </div>
         </header>

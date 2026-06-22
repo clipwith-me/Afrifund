@@ -283,12 +283,12 @@ export default function CertificatesPage() {
                         Share
                       </Button>
 
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/campaigns/${certificate.pledge?.campaign?.slug || ''}`}>
+                      <Link href={`/campaigns/${certificate.pledge?.campaign?.slug || ''}`}>
+                        <Button variant="outline" size="sm">
                           <ExternalLink className="mr-2 h-4 w-4" />
                           View
-                        </Link>
-                      </Button>
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </CardContent>
@@ -311,12 +311,12 @@ export default function CertificatesPage() {
             <p className="mt-2 text-gray-600">
               Start backing campaigns to earn free contribution certificates!
             </p>
-            <Button asChild className="mt-6">
-              <Link href="/campaigns">
+            <Link href="/campaigns">
+              <Button className="mt-6">
                 <ExternalLink className="mr-2 h-4 w-4" />
                 Browse Campaigns
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       )}

@@ -219,11 +219,11 @@ export default function CampaignsPage() {
               <p className="text-sm text-gray-600">
                 {loading ? 'Loading...' : `${filteredAndSortedCampaigns.length} campaigns found`}
               </p>
-              <Button asChild size="sm">
-                <Link href="/dashboard/campaigns/create">
+              <Link href="/dashboard/campaigns/create">
+                <Button size="sm">
                   Start Campaign
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </div>
 
             {/* Loading State */}

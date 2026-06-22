@@ -103,12 +103,12 @@ export default function MyCampaignsPage() {
           <h1 className="text-2xl font-bold text-gray-900">My Campaigns</h1>
           <p className="mt-1 text-gray-600">Manage and track your fundraising campaigns</p>
         </div>
-        <Button asChild>
-          <Link href="/dashboard/campaigns/create">
+        <Link href="/dashboard/campaigns/create">
+          <Button>
             <Plus className="mr-2 h-4 w-4" />
             Create Campaign
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
 
       {/* Stats */}
@@ -214,19 +214,19 @@ export default function MyCampaignsPage() {
 
                   {/* Actions */}
                   <div className="flex gap-2">
-                    <Button asChild variant="outline" size="sm" className="flex-1">
-                      <Link href={`/campaigns/${campaign.slug}`}>
+                    <Link href={`/campaigns/${campaign.slug}`} className="flex-1">
+                      <Button variant="outline" size="sm" className="w-full">
                         <Eye className="mr-2 h-4 w-4" />
                         View
-                      </Link>
-                    </Button>
+                      </Button>
+                    </Link>
                     {campaign.status === 'DRAFT' && (
-                      <Button asChild size="sm" className="flex-1">
-                        <Link href={`/dashboard/campaigns/${campaign.id}/edit`}>
+                      <Link href={`/dashboard/campaigns/${campaign.id}/edit`} className="flex-1">
+                        <Button size="sm" className="w-full">
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
-                        </Link>
-                      </Button>
+                        </Button>
+                      </Link>
                     )}
                   </div>
 
@@ -259,12 +259,12 @@ export default function MyCampaignsPage() {
                 ? 'Start your first fundraising campaign today'
                 : 'Try adjusting your filter'}
             </p>
-            <Button asChild className="mt-6">
-              <Link href="/dashboard/campaigns/create">
+            <Link href="/dashboard/campaigns/create">
+              <Button className="mt-6">
                 <Plus className="mr-2 h-4 w-4" />
                 Create Campaign
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       )}
