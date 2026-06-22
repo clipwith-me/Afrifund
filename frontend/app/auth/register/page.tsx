@@ -20,7 +20,7 @@ const registerSchema = z.object({
   phone: z.string().optional(),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string(),
-  role: z.enum(['CREATOR', 'BACKER', 'MENTOR']).optional(),
+  role: z.enum(['CREATOR', 'BACKER', 'MENTOR', 'ADMIN']).optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],
@@ -107,6 +107,7 @@ export default function RegisterPage() {
                 <option value="BACKER">Support campaigns (Backer)</option>
                 <option value="CREATOR">Create campaigns (Creator)</option>
                 <option value="MENTOR">Become a mentor (Mentor)</option>
+                <option value="ADMIN">Platform Administrator (Admin)</option>
               </select>
             </div>
 
