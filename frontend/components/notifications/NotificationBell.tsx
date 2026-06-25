@@ -149,7 +149,7 @@ export function NotificationBell() {
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 rounded-lg border border-gray-200 bg-white shadow-lg z-50">
+        <div className="absolute right-0 mt-2 w-screen max-w-md sm:w-96 rounded-lg border border-gray-200 bg-white shadow-lg z-50 mx-4 sm:mx-0">
           {/* Header */}
           <div className="flex items-center justify-between border-b px-4 py-3">
             <h3 className="font-semibold text-gray-900">Notifications</h3>
@@ -158,14 +158,17 @@ export function NotificationBell() {
                 <button
                   onClick={handleMarkAllAsRead}
                   className="text-xs text-primary-600 hover:text-primary-700"
+                  aria-label="Mark all as read"
                 >
                   <CheckCheck className="inline h-3 w-3 mr-1" />
-                  Mark all read
+                  <span className="hidden sm:inline">Mark all read</span>
+                  <span className="sm:hidden">All read</span>
                 </button>
               )}
               <button
                 onClick={() => setIsOpen(false)}
                 className="rounded p-1 hover:bg-gray-100"
+                aria-label="Close notifications"
               >
                 <X className="h-4 w-4" />
               </button>

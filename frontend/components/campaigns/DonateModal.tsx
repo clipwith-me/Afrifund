@@ -151,7 +151,7 @@ export function DonateModal({ open, onClose, campaign, onSuccess }: DonateModalP
               <label className="mb-3 block text-sm font-medium text-gray-700">
                 Select Amount
               </label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {quickAmounts.map((amt) => (
                   <button
                     key={amt}

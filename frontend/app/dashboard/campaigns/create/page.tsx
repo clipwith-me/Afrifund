@@ -203,8 +203,8 @@ export default function CreateCampaignPage() {
       </div>
 
       {/* Progress Steps */}
-      <div className="overflow-x-auto">
-        <div className="flex items-center justify-between min-w-[600px]">
+      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex items-center justify-between min-w-[500px] sm:min-w-0">
           {steps.map((step, idx) => (
             <div key={step.id} className="flex flex-1 items-center">
               <div className="flex flex-col items-center flex-1">
