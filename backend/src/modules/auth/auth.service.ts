@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from '@prisma/client';
@@ -9,6 +10,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -63,6 +65,9 @@ export class AuthService {
     role?: UserRole;
   }) {
     const user = await this.usersService.create(data);
+
+    // Emit user.registered event for welcome email
+    this.eventEmitter.emit('user.registered', user);
 
     const payload = {
       email: user.email,

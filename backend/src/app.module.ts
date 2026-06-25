@@ -22,6 +22,7 @@ import { CertificatesModule } from './modules/certificates/certificates.module';
 import { MentorsModule } from './modules/mentors/mentors.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { EmailModule } from './modules/email/email.module';
 
 // Check if Redis is available (optional for MVP deployment)
 const isRedisEnabled = process.env.REDIS_HOST !== undefined || process.env.REDIS_URL !== undefined;
@@ -68,6 +69,7 @@ const isRedisEnabled = process.env.REDIS_HOST !== undefined || process.env.REDIS
     HealthModule,
 
     // Feature Modules
+    EmailModule,
     AuthModule,
     UsersModule,
     KycModule,
