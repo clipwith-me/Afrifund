@@ -1,18 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
-import * as crypto from 'crypto';
 import { PaymentProvider } from './payment-provider.interface';
+import Flutterwave from 'flutterwave-node-v3';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class FlutterwaveProvider implements PaymentProvider {
-  private readonly baseUrl = 'https://api.flutterwave.com/v3';
-  private readonly secretKey: string;
+  private readonly logger = new Logger(FlutterwaveProvider.name);
+  private flw: any;
   private readonly publicKey: string;
+  private readonly secretKey: string;
+  private readonly webhookSecret: string;
+  private readonly redirectUrl: string;
 
-  constructor(private config: ConfigService) {
-    this.secretKey = this.config.get('FLUTTERWAVE_SECRET_KEY') || 'MOCK_SECRET';
-    this.publicKey = this.config.get('FLUTTERWAVE_PUBLIC_KEY') || 'MOCK_PUBLIC';
+  constructor(private configService: ConfigService) {
+    this.publicKey = this.configService.get('FLUTTERWAVE_PUBLIC_KEY', '');
+    this.secretKey = this.configService.get('FLUTTERWAVE_SECRET_KEY', '');
+    this.webhookSecret = this.configService.get('FLUTTERWAVE_WEBHOOK_SECRET', '');
+    this.redirectUrl = this.configService.get('FLUTTERWAVE_REDIRECT_URL', 'http://localhost:3000/payment/callback');
+
+    if (this.publicKey && this.secretKey) {
+      this.flw = new Flutterwave(this.publicKey, this.secretKey);
+      this.logger.log('Flutterwave initialized with live credentials');
+    } else {
+      this.logger.warn('Flutterwave credentials not configured - payment will fail');
+    }
   }
 
   async initializePayment(data: {
@@ -23,45 +35,47 @@ export class FlutterwaveProvider implements PaymentProvider {
     campaignTitle: string;
     metadata?: any;
   }): Promise<{ paymentUrl: string; reference: string }> {
-    // Mock implementation for MVP
-    if (this.secretKey === 'MOCK_SECRET') {
-      return {
-        paymentUrl: `http://localhost:3000/payment/mock?reference=FLW-${data.transactionId}`,
-        reference: `FLW-${data.transactionId}`,
-      };
+    if (!this.flw) {
+      throw new Error('Flutterwave not configured. Please set FLUTTERWAVE_PUBLIC_KEY and FLUTTERWAVE_SECRET_KEY');
     }
 
-    // Real Flutterwave implementation
     try {
-      const response = await axios.post(
-        `${this.baseUrl}/payments`,
-        {
-          tx_ref: data.transactionId,
-          amount: data.amount,
-          currency: data.currency,
-          redirect_url: `${this.config.get('FRONTEND_URL')}/payment/callback`,
-          customer: {
-            email: data.email,
-          },
-          customizations: {
-            title: 'AfriFund',
-            description: `Contribution to ${data.campaignTitle}`,
-          },
-          meta: data.metadata,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.secretKey}`,
-          },
-        },
-      );
+      const reference = `FLW-${data.transactionId}-${Date.now()}`;
 
-      return {
-        paymentUrl: response.data.data.link,
-        reference: data.transactionId,
+      const payload = {
+        tx_ref: reference,
+        amount: data.amount,
+        currency: data.currency,
+        redirect_url: this.redirectUrl,
+        payment_options: 'card,mobilemoney,ussd,banktransfer',
+        customer: {
+          email: data.email,
+          name: data.metadata?.customerName || 'AfriFund User',
+        },
+        customizations: {
+          title: 'AfriFund Campaign',
+          description: `Support: ${data.campaignTitle}`,
+          logo: 'https://afrifund.com/logo.png',
+        },
+        meta: {
+          transactionId: data.transactionId,
+          campaignTitle: data.campaignTitle,
+          ...data.metadata,
+        },
       };
+
+      const response = await this.flw.Charge.card(payload);
+
+      if (response.status === 'success') {
+        return {
+          paymentUrl: response.data.link,
+          reference,
+        };
+      }
+
+      throw new Error(response.message || 'Failed to initialize Flutterwave payment');
     } catch (error) {
-      console.error('Flutterwave initialization error:', error.message);
+      this.logger.error('Flutterwave initialization failed', error);
       throw error;
     }
   }
@@ -73,49 +87,43 @@ export class FlutterwaveProvider implements PaymentProvider {
     reference: string;
     status: string;
   }> {
-    // Mock implementation
-    if (this.secretKey === 'MOCK_SECRET') {
-      return {
-        success: true,
-        amount: 100,
-        currency: 'USD',
-        reference,
-        status: 'successful',
-      };
+    if (!this.flw) {
+      throw new Error('Flutterwave not configured');
     }
 
-    // Real implementation
     try {
-      const response = await axios.get(
-        `${this.baseUrl}/transactions/verify_by_reference?tx_ref=${reference}`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.secretKey}`,
-          },
-        },
-      );
+      const response = await this.flw.Transaction.verify({ id: reference });
 
-      const data = response.data.data;
-      return {
-        success: data.status === 'successful',
-        amount: data.amount,
-        currency: data.currency,
-        reference: data.tx_ref,
-        status: data.status,
-      };
+      if (response.status === 'success') {
+        const data = response.data;
+        return {
+          success: data.status === 'successful',
+          amount: data.amount,
+          currency: data.currency,
+          reference: data.tx_ref,
+          status: data.status,
+        };
+      }
+
+      throw new Error('Failed to verify Flutterwave payment');
     } catch (error) {
-      console.error('Flutterwave verification error:', error.message);
+      this.logger.error('Flutterwave verification failed', error);
       throw error;
     }
   }
 
   verifyWebhook(payload: any, signature?: string): boolean {
-    if (this.secretKey === 'MOCK_SECRET') {
-      return true;
+    if (!this.webhookSecret) {
+      this.logger.warn('Flutterwave webhook secret not configured - skipping verification');
+      return true; // Allow in dev mode
+    }
+
+    if (!signature) {
+      return false;
     }
 
     const hash = crypto
-      .createHmac('sha256', this.config.get('FLUTTERWAVE_SECRET_KEY'))
+      .createHmac('sha256', this.webhookSecret)
       .update(JSON.stringify(payload))
       .digest('hex');
 
@@ -129,12 +137,19 @@ export class FlutterwaveProvider implements PaymentProvider {
     currency: string;
     metadata?: any;
   } {
+    const data = payload.data || payload;
+
     return {
-      reference: payload.data.tx_ref,
-      status: payload.data.status === 'successful' ? 'success' : 'failed',
-      amount: payload.data.amount,
-      currency: payload.data.currency,
-      metadata: payload.data,
+      reference: data.tx_ref || data.txRef,
+      status: data.status === 'successful' ? 'success' : 'failed',
+      amount: parseFloat(data.amount),
+      currency: data.currency,
+      metadata: {
+        transactionId: data.id,
+        flutterwaveRef: data.flw_ref,
+        paymentType: data.payment_type,
+        customer: data.customer,
+      },
     };
   }
 }

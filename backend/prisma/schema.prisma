@@ -196,6 +196,7 @@ model Campaign {
   media           CampaignMedia[]
   pledges         Pledge[]
   mentorSessions  MentorSession[]
+  activities      Activity[]
 
   @@index([creatorId])
   @@index([status])
@@ -249,6 +250,7 @@ model Pledge {
   paymentTransaction    PaymentTransaction?
   certificate           Certificate?
   platformRevenue       PlatformRevenue?
+  activities            Activity[]
 
   @@index([campaignId])
   @@index([backerId])
