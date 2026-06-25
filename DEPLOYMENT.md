@@ -1,203 +1,325 @@
 # AfriFund Deployment Guide
 
-## 🚀 Deploy Backend to Railway
+## Current Deployment Status
 
-### Step 1: Create Railway Account
-1. Go to https://railway.app
-2. Sign up with GitHub (free tier available)
+**Branch:** `claude/afrifund-mvp-platform-01C4cTj3aRufHDrWzXQVFGKN`  
+**Latest Commit:** `24fec2c` - Add admin user creation tools and SQL commands  
+**Status:** ✅ Code pushed - Auto-deployment should trigger
 
-### Step 2: Deploy Backend
-1. Click "New Project" → "Deploy from GitHub repo"
-2. Select the `Afrifund` repository
-3. Choose the `backend` folder as the root directory
-4. Railway will auto-detect Node.js and PostgreSQL
+---
 
-### Step 3: Add PostgreSQL Database
-1. Click "+ New" → "Database" → "PostgreSQL"
-2. Railway will automatically add `DATABASE_URL` environment variable
+## 🏗️ Deployment Architecture
 
-### Step 4: Configure Environment Variables
-In Railway dashboard, add these environment variables:
+### Backend - Render
+- **URL:** https://afrifund-backend.onrender.com
+- **Service:** afrifund-backend
+- **Region:** Oregon (US West)
+- **Database:** PostgreSQL (afrifund-db)
+- **Health Check:** https://afrifund-backend.onrender.com/api/v1/health
 
+### Frontend - Vercel
+- **URL:** https://afrifund.vercel.app
+- **Project:** afrifund
+- **Region:** Washington D.C. (iad1)
+- **Framework:** Next.js 15
+- **Backend API:** https://afrifund-backend.onrender.com/api/v1
+
+---
+
+## 🚀 Automatic Deployment
+
+Both platforms are configured for **automatic deployment** on git push.
+
+✅ **Your latest changes are pushed** - Deployments should start automatically!
+
+**Monitor deployments:**
+- **Render:** https://dashboard.render.com/
+- **Vercel:** https://vercel.com/dashboard
+
+---
+
+## 🔧 Manual Deployment (If Needed)
+
+### Option 1: Render Dashboard
+1. Go to: https://dashboard.render.com/
+2. Find service: **afrifund-backend**
+3. Click **"Manual Deploy"**
+4. Select branch: `claude/afrifund-mvp-platform-01C4cTj3aRufHDrWzXQVFGKN`
+5. Click **"Deploy"**
+
+### Option 2: Vercel Dashboard
+1. Go to: https://vercel.com/dashboard
+2. Find project: **afrifund**
+3. Go to **"Deployments"** tab
+4. Click **"Redeploy"** on latest deployment
+
+### Option 3: Force Push to Trigger Deployment
 ```bash
-NODE_ENV=production
-PORT=3001
-API_PREFIX=api/v1
-
-# DATABASE_URL is auto-provided by Railway PostgreSQL
-
-# JWT Secrets (CHANGE THESE!)
-JWT_SECRET=your-super-secret-production-key-change-this
-JWT_EXPIRES_IN=7d
-JWT_REFRESH_SECRET=your-refresh-secret-production-key-change-this
-JWT_REFRESH_EXPIRES_IN=30d
-
-# Redis (Railway will provide if you add Redis service)
-REDIS_HOST=localhost
-REDIS_PORT=6379
-REDIS_PASSWORD=
-
-# Rate Limiting
-THROTTLE_TTL=60
-THROTTLE_LIMIT=10
-
-# Frontend URL (Update after deploying frontend)
-FRONTEND_URL=https://your-frontend.vercel.app
-
-# Payment Providers (Mock for MVP)
-FLUTTERWAVE_PUBLIC_KEY=FLWPUBK_TEST-xxxxx
-FLUTTERWAVE_SECRET_KEY=FLWSECK_TEST-xxxxx
-FLUTTERWAVE_ENCRYPTION_KEY=FLWSECK_TESTxxxxx
-PAYSTACK_PUBLIC_KEY=pk_test_xxxxx
-PAYSTACK_SECRET_KEY=sk_test_xxxxx
-MPESA_CONSUMER_KEY=xxxxx
-MPESA_CONSUMER_SECRET=xxxxx
-MPESA_PASSKEY=xxxxx
-MPESA_SHORTCODE=174379
-
-# Platform Settings
-PLATFORM_FEE_PERCENTAGE=3.0
-MAX_FILE_SIZE=10485760
-UPLOAD_DIR=./uploads
-CERTIFICATE_STORAGE_PATH=./public/certificates
-
-# Mock KYC
-MOCK_KYC_AUTO_APPROVE=true
+git commit --allow-empty -m "Trigger deployment"
+git push -u origin claude/afrifund-mvp-platform-01C4cTj3aRufHDrWzXQVFGKN
 ```
 
-### Step 5: Deploy
-1. Railway will automatically build and deploy
-2. Get your backend URL: `https://your-app.railway.app`
-3. Test: `https://your-app.railway.app/api/v1/campaigns`
+### Option 4: Using CLI Tools
 
----
-
-## 🎨 Deploy Frontend to Vercel
-
-### Step 1: Create Vercel Account
-1. Go to https://vercel.com
-2. Sign up with GitHub (free tier available)
-
-### Step 2: Deploy Frontend
-1. Click "Add New Project"
-2. Import `Afrifund` repository
-3. Configure:
-   - **Framework Preset**: Next.js
-   - **Root Directory**: `frontend`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `.next`
-
-### Step 3: Configure Environment Variables
-In Vercel dashboard, add:
-
+**Vercel CLI:**
 ```bash
-# Backend API URL (from Railway deployment)
-NEXT_PUBLIC_API_URL=https://your-backend.railway.app/api/v1
-NEXT_PUBLIC_APP_URL=https://your-frontend.vercel.app
-
-# Payment Provider Public Keys
-NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY=FLWPUBK_TEST-xxxxx
-NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=pk_test_xxxxx
-
-# Feature Flags
-NEXT_PUBLIC_ENABLE_MOCK_PAYMENTS=true
+cd frontend
+npx vercel --prod
 ```
 
-### Step 4: Deploy
-1. Click "Deploy"
-2. Vercel will build and deploy automatically
-3. Get your frontend URL: `https://your-app.vercel.app`
-
-### Step 5: Update Backend CORS
-1. Go back to Railway
-2. Update `FRONTEND_URL` environment variable with your Vercel URL
-3. Redeploy backend
+**Render CLI:**
+```bash
+npm install -g @render/cli
+render deploy --service afrifund-backend
+```
 
 ---
 
-## 🔗 Connect Everything
+## ✅ Deployment Verification
 
-After both deployments:
+### 1. Check Backend Health
+```bash
+curl https://afrifund-backend.onrender.com/api/v1/health
+```
 
-1. **Update Backend `FRONTEND_URL`**:
-   - Railway → Environment Variables
-   - Set `FRONTEND_URL=https://your-app.vercel.app`
+**Expected Response:**
+```json
+{
+  "status": "ok",
+  "timestamp": "2026-06-25T...",
+  "database": "connected"
+}
+```
 
-2. **Update Frontend `NEXT_PUBLIC_API_URL`**:
-   - Vercel → Settings → Environment Variables
-   - Set `NEXT_PUBLIC_API_URL=https://your-backend.railway.app/api/v1`
+### 2. Check Frontend
+```bash
+curl -I https://afrifund.vercel.app
+```
 
-3. **Redeploy both services** to apply changes
+**Expected:** `HTTP/2 200`
+
+### 3. Test Admin Login
+
+**Via Browser:**
+1. Go to: https://afrifund.vercel.app/auth/login
+2. Enter:
+   - **Email:** `lekankolawolejohn@gmail.com`
+   - **Password:** `Kolawolelekan@21`
+3. Click **"Sign In"**
+4. ✅ Should redirect to dashboard
+
+**Via API:**
+```bash
+curl -X POST https://afrifund-backend.onrender.com/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "lekankolawolejohn@gmail.com",
+    "password": "Kolawolelekan@21"
+  }'
+```
+
+**Expected Response:**
+```json
+{
+  "user": {
+    "id": "...",
+    "email": "lekankolawolejohn@gmail.com",
+    "role": "ADMIN",
+    "isVerified": true
+  },
+  "accessToken": "eyJhbGci..."
+}
+```
 
 ---
 
-## 🧪 Test Your Deployment
+## 📊 Deployment Timeline
 
-Visit your Vercel URL and test:
+**Typical deployment times:**
 
-1. **Homepage**: `https://your-app.vercel.app`
-2. **Login**: Use test accounts
-   - Creator: test@afrifund.com / Test123!@#
-   - Backer: backer@afrifund.com / Backer123!@#
-3. **API Health**: `https://your-backend.railway.app/api/v1/campaigns`
+- **Vercel (Frontend):** 2-5 minutes
+  - Install dependencies: 30-60s
+  - Build Next.js: 60-90s
+  - Deploy: 30-60s
 
----
+- **Render (Backend):** 5-10 minutes
+  - Install dependencies: 2-3 min
+  - Prisma generate: 30-60s
+  - Build NestJS: 2-3 min
+  - Start server: 30s
 
-## 📝 Test Accounts (Already Created)
-
-These accounts exist in your database:
-
-- **Creator**: test@afrifund.com / Test123!@# (KYC Approved)
-- **Backer**: backer@afrifund.com / Backer123!@#
-- **Admin**: admin@afrifund.com / Admin123!@#
-
-**Test Campaign**: "Solar Power for Rural Communities" (Already ACTIVE)
+⚠️ **Note:** Render free tier spins down after 15 min of inactivity. First request takes ~30-60s to wake up.
 
 ---
 
-## 🔒 Production Checklist
+## 📝 Admin User Setup
 
-Before going live:
+**Credentials:**
+- **Email:** lekankolawolejohn@gmail.com
+- **Password:** Kolawolelekan@21
+- **Role:** ADMIN
 
-- [ ] Change all JWT secrets to strong random values
-- [ ] Add real payment provider credentials
-- [ ] Disable `MOCK_KYC_AUTO_APPROVE`
-- [ ] Set up proper email service (SMTP)
-- [ ] Add Redis service on Railway for better performance
-- [ ] Enable database backups
-- [ ] Set up monitoring and logging
-- [ ] Add custom domain names
+✅ **Already created via SQL** (user confirmed)
+
+If login fails, see `CREATE_ADMIN_USER.md` for troubleshooting.
+
+---
+
+## 🔍 Monitoring Logs
+
+### Render Logs
+```bash
+# Via Dashboard
+https://dashboard.render.com/ → afrifund-backend → Logs
+
+# Via API
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  https://api.render.com/v1/services/{serviceId}/logs
+```
+
+### Vercel Logs
+```bash
+# Via CLI
+cd frontend
+npx vercel logs afrifund --prod
+
+# Via Dashboard
+https://vercel.com/dashboard → afrifund → Deployments
+```
+
+---
+
+## 🧪 Post-Deployment Testing
+
+After deployment completes:
+
+- [ ] Backend health endpoint responds
+- [ ] Frontend loads without errors  
+- [ ] Admin login works
+- [ ] Database connection active
+- [ ] Create test campaign
+- [ ] Test donation flow
+- [ ] Check mobile responsiveness
+- [ ] Verify notifications work
 
 ---
 
 ## 🆘 Troubleshooting
 
-**Backend won't start:**
-- Check `DATABASE_URL` is set correctly
-- Check all required env vars are present
-- View Railway logs for errors
+### Backend Issues
 
-**Frontend can't connect to backend:**
-- Verify `NEXT_PUBLIC_API_URL` is correct
-- Check backend CORS settings (`FRONTEND_URL`)
-- Test backend API directly in browser
+**"Cannot reach database server"**
+- Check Render dashboard → Environment → DATABASE_URL is set
+- Verify database is running
 
-**Database migration errors:**
-- Railway runs migrations automatically via Procfile
-- If issues, manually run: `npx prisma migrate deploy`
+**"Module not found" errors**
+- Ensure build command includes: `npx prisma generate`
+- Check `render.yaml` configuration
+
+**"Port already in use"**
+- Render sets PORT=10000 automatically
+- Verify in environment variables
+
+### Frontend Issues
+
+**"NEXT_PUBLIC_API_URL is undefined"**
+- Vercel → Project Settings → Environment Variables
+- Add: `NEXT_PUBLIC_API_URL=https://afrifund-backend.onrender.com/api/v1`
+- Redeploy
+
+**"Network request failed"**
+- Check backend is running
+- Verify CORS configured for Vercel domain
+
+### Admin Login Issues
+
+**"Invalid credentials" after deployment:**
+
+1. **Admin user not in production database**
+   - Run SQL command on production DB (see CREATE_ADMIN_USER.md)
+   - Or: `npm run prisma:seed` if backend has DB access
+
+2. **Wrong DATABASE_URL**
+   - Check Render environment variable
+   - Verify points to production database
+
+3. **Password hash mismatch**
+   - Must use: `$2b$10$0OZMzwBasa/5QC5XI33C3epP3szorsxRx0LxnsSj6sTAs3gxTcbBm`
 
 ---
 
-## 💰 Costs
+## 🔒 Environment Variables
 
-**Railway Free Tier:**
-- $5 free credits monthly
-- Enough for development/testing
-- ~500 hours of usage
+### Backend (Render)
+```env
+NODE_ENV=production
+DATABASE_URL=postgresql://user:pass@host:port/afrifund
+JWT_SECRET=<auto-generated>
+JWT_EXPIRATION=7d
+PORT=10000
+
+# Optional: Real Payment Providers
+FLUTTERWAVE_PUBLIC_KEY=<your-key>
+FLUTTERWAVE_SECRET_KEY=<your-key>
+PAYSTACK_PUBLIC_KEY=<your-key>
+PAYSTACK_SECRET_KEY=<your-key>
+MPESA_CONSUMER_KEY=<your-key>
+MPESA_CONSUMER_SECRET=<your-key>
+```
+
+### Frontend (Vercel)
+```env
+NEXT_PUBLIC_API_URL=https://afrifund-backend.onrender.com/api/v1
+NEXT_PUBLIC_APP_URL=https://afrifund.vercel.app
+NEXT_PUBLIC_ENABLE_MOCK_PAYMENTS=true
+```
+
+---
+
+## 📚 Related Documentation
+
+- `CREATE_ADMIN_USER.md` - Admin user creation guide
+- `PAYMENT_CONFIG.md` - Payment provider setup
+- `SEED_USERS.md` - Database seeding
+- `render.yaml` - Render deployment config
+- `frontend/vercel.json` - Vercel deployment config
+
+---
+
+## 🔗 Quick Links
+
+- **Frontend:** https://afrifund.vercel.app
+- **Backend:** https://afrifund-backend.onrender.com
+- **Health Check:** https://afrifund-backend.onrender.com/api/v1/health
+- **Login:** https://afrifund.vercel.app/auth/login
+- **Render Dashboard:** https://dashboard.render.com/
+- **Vercel Dashboard:** https://vercel.com/dashboard
+
+---
+
+## 💰 Free Tier Limits
+
+**Render Free Tier:**
+- 750 hours/month
+- Auto-sleep after 15 min inactivity
+- PostgreSQL: 1GB storage
 
 **Vercel Free Tier:**
-- 100GB bandwidth
+- 100GB bandwidth/month
 - Unlimited deployments
-- Perfect for hobby projects
+- Unlimited team members
 
-Both platforms offer generous free tiers for MVP testing! 🎉
+---
+
+## 📞 Support
+
+For deployment issues:
+
+1. Check platform status pages
+2. Review deployment logs
+3. Verify environment variables
+4. Test health endpoints
+5. Check database connectivity
+
+**Last Updated:** 2026-06-25  
+**Commit:** 24fec2c
