@@ -23,13 +23,13 @@ export function Logo({
       {/* Background circle with gradient */}
       <defs>
         <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: '#FF6B35', stopOpacity: 1 }} />
-          <stop offset="50%" style={{ stopColor: '#F7931E', stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: '#FDB913', stopOpacity: 1 }} />
+          <stop offset="0%" style={{ stopColor: '#0ea5e9', stopOpacity: 1 }} />
+          <stop offset="50%" style={{ stopColor: '#0284c7', stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: '#0369a1', stopOpacity: 1 }} />
         </linearGradient>
         <linearGradient id="sunGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style={{ stopColor: '#FFD700', stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: '#FFA500', stopOpacity: 1 }} />
+          <stop offset="0%" style={{ stopColor: '#38bdf8', stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: '#0ea5e9', stopOpacity: 1 }} />
         </linearGradient>
       </defs>
 
@@ -109,13 +109,13 @@ export function LogoCompact({ className = '' }: { className?: string }) {
       >
         <defs>
           <linearGradient id="logoGradientCompact" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style={{ stopColor: '#FF6B35', stopOpacity: 1 }} />
-            <stop offset="50%" style={{ stopColor: '#F7931E', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#FDB913', stopOpacity: 1 }} />
+            <stop offset="0%" style={{ stopColor: '#0ea5e9', stopOpacity: 1 }} />
+            <stop offset="50%" style={{ stopColor: '#0284c7', stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: '#0369a1', stopOpacity: 1 }} />
           </linearGradient>
           <linearGradient id="sunGradientCompact" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style={{ stopColor: '#FFD700', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#FFA500', stopOpacity: 1 }} />
+            <stop offset="0%" style={{ stopColor: '#38bdf8', stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: '#0ea5e9', stopOpacity: 1 }} />
           </linearGradient>
         </defs>
         <circle cx="24" cy="24" r="23" fill="url(#logoGradientCompact)" />
@@ -145,13 +145,13 @@ export function LogoAnimated({ className = '' }: { className?: string }) {
       >
         <defs>
           <linearGradient id="logoGradientAnim" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style={{ stopColor: '#FF6B35', stopOpacity: 1 }} />
-            <stop offset="50%" style={{ stopColor: '#F7931E', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#FDB913', stopOpacity: 1 }} />
+            <stop offset="0%" style={{ stopColor: '#0ea5e9', stopOpacity: 1 }} />
+            <stop offset="50%" style={{ stopColor: '#0284c7', stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: '#0369a1', stopOpacity: 1 }} />
           </linearGradient>
           <linearGradient id="sunGradientAnim" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style={{ stopColor: '#FFD700', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#FFA500', stopOpacity: 1 }} />
+            <stop offset="0%" style={{ stopColor: '#38bdf8', stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: '#0ea5e9', stopOpacity: 1 }} />
           </linearGradient>
         </defs>
         <circle cx="24" cy="24" r="23" fill="url(#logoGradientAnim)" />
