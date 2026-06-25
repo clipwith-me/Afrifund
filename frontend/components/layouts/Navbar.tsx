@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Button } from '@/components/ui/Button';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { Menu, X, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
 
@@ -47,6 +48,7 @@ export function Navbar() {
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
             {isAuthenticated ? (
               <>
+                <NotificationBell />
                 <Link href="/dashboard">
                   <Button variant="ghost" size="sm">
                     <User className="mr-2 h-4 w-4" />

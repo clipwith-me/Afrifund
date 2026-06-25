@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Button } from '@/components/ui/Button';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 import {
   LayoutDashboard,
   Briefcase,
@@ -17,6 +18,7 @@ import {
   CheckCircle,
   AlertCircle,
   Users,
+  Bell,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -25,6 +27,7 @@ const navigation = [
   { name: 'My Campaigns', href: '/dashboard/campaigns', icon: Briefcase },
   { name: 'My Pledges', href: '/dashboard/pledges', icon: Heart },
   { name: 'Mentoring', href: '/dashboard/mentoring', icon: Users },
+  { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },
   { name: 'Certificates', href: '/dashboard/certificates', icon: Award },
   { name: 'Profile', href: '/dashboard/profile', icon: User },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
@@ -163,6 +166,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
 
           <div className="flex items-center gap-4">
+            <NotificationBell />
             {user.role === 'CREATOR' && (
               <Link href="/dashboard/campaigns/create">
                 <Button size="sm">Create Campaign</Button>
