@@ -19,6 +19,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { ActivityFeed } from '@/components/activity/ActivityFeed';
 
 export default function DashboardOverviewPage() {
   const { user } = useAuthStore();

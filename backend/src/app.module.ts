@@ -23,6 +23,7 @@ import { MentorsModule } from './modules/mentors/mentors.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { EmailModule } from './modules/email/email.module';
+import { ActivityModule } from './modules/activity/activity.module';
 
 // Check if Redis is available (optional for MVP deployment)
 const isRedisEnabled = process.env.REDIS_HOST !== undefined || process.env.REDIS_URL !== undefined;
@@ -80,6 +81,7 @@ const isRedisEnabled = process.env.REDIS_HOST !== undefined || process.env.REDIS
     MentorsModule,
     NotificationsModule,
     AdminModule,
+    ActivityModule,
   ],
 })
 export class AppModule {}

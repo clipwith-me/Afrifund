@@ -73,6 +73,17 @@ enum NotificationType {
   PAYOUT_PROCESSED
 }
 
+enum ActivityType {
+  CAMPAIGN_LAUNCHED
+  PLEDGE_MADE
+  CAMPAIGN_FUNDED
+  USER_JOINED
+  KYC_VERIFIED
+  CERTIFICATE_EARNED
+  MENTOR_JOINED_PLATFORM
+  MENTOR_SESSION_STARTED
+}
+
 enum IDType {
   NATIONAL_ID
   PASSPORT
@@ -107,6 +118,7 @@ model User {
   mentorProfile      Mentor?
   notifications      Notification[]
   paymentTransactions PaymentTransaction[]
+  activities         Activity[]
 
   @@index([email])
   @@index([role])
@@ -431,4 +443,28 @@ model Notification {
   @@index([isRead])
   @@index([type])
   @@map("notifications")
+}
+
+model Activity {
+  id            String       @id @default(cuid())
+  type          ActivityType
+  userId        String?
+  userName      String?
+  userAvatar    String?
+  campaignId    String?
+  campaignTitle String?
+  pledgeId      String?
+  amount        Decimal?
+  currency      String?
+  message       String
+  metadata      Json?
+  createdAt     DateTime     @default(now())
+
+  user          User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  campaign      Campaign?    @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  pledge        Pledge?      @relation(fields: [pledgeId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([type, createdAt])
+  @@map("activities")
 }
