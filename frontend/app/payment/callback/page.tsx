@@ -5,29 +5,69 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { CheckCircle, XCircle, Loader2, Home, FileText } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Home, FileText, AlertCircle } from 'lucide-react';
+import { paymentsApi, type PaymentProvider } from '@/lib/api/payments';
+import { toast } from 'sonner';
 
 function PaymentCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<'loading' | 'success' | 'failed'>('loading');
-  const [message, setMessage] = useState('Processing your payment...');
+  const [status, setStatus] = useState<'loading' | 'success' | 'failed' | 'error'>('loading');
+  const [message, setMessage] = useState('Verifying your payment...');
+  const [paymentDetails, setPaymentDetails] = useState<any>(null);
 
   useEffect(() => {
-    const paymentStatus = searchParams.get('status');
-    const reference = searchParams.get('reference');
+    verifyPayment();
+  }, [searchParams]);
 
-    // Simulate payment verification
-    setTimeout(() => {
-      if (paymentStatus === 'success' || reference) {
+  const verifyPayment = async () => {
+    const provider = searchParams.get('provider') as PaymentProvider;
+    const reference = searchParams.get('reference');
+    const txRef = searchParams.get('tx_ref'); // Flutterwave
+    const transactionId = searchParams.get('transaction_id'); // M-Pesa
+
+    // Determine the reference and provider from URL params
+    const paymentRef = reference || txRef || transactionId;
+
+    if (!paymentRef) {
+      setStatus('error');
+      setMessage('No payment reference found. Please contact support if you completed a payment.');
+      return;
+    }
+
+    // Determine provider if not explicitly provided
+    let paymentProvider = provider;
+    if (!paymentProvider) {
+      if (txRef) paymentProvider = 'FLUTTERWAVE';
+      else if (transactionId) paymentProvider = 'MPESA';
+      else paymentProvider = 'MOCK';
+    }
+
+    try {
+      const response = await paymentsApi.verify(paymentProvider, paymentRef);
+
+      if (response.data.success) {
         setStatus('success');
         setMessage('Payment successful! Your contribution has been recorded.');
+        setPaymentDetails(response.data);
       } else {
         setStatus('failed');
-        setMessage('Payment failed. Please try again.');
+        setMessage(
+          response.data.status === 'pending'
+            ? 'Payment is still being processed. Please check back in a few minutes.'
+            : 'Payment verification failed. If you completed the payment, please contact support.'
+        );
       }
-    }, 2000);
-  }, [searchParams]);
+    } catch (error: any) {
+      console.error('Payment verification error:', error);
+      setStatus('error');
+      setMessage(
+        error.response?.data?.message ||
+        'Unable to verify payment. Please contact support if you completed a payment.'
+      );
+      toast.error('Payment verification failed');
+    }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -38,8 +78,8 @@ function PaymentCallbackContent() {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center">
                 <Loader2 className="h-16 w-16 animate-spin text-primary-600" />
               </div>
-              <CardTitle>Processing Payment</CardTitle>
-              <CardDescription>Please wait while we verify your payment...</CardDescription>
+              <CardTitle>Verifying Payment</CardTitle>
+              <CardDescription>Please wait while we confirm your payment...</CardDescription>
             </>
           )}
 
@@ -55,10 +95,20 @@ function PaymentCallbackContent() {
 
           {status === 'failed' && (
             <>
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100">
+                <AlertCircle className="h-12 w-12 text-yellow-600" />
+              </div>
+              <CardTitle className="text-yellow-900">Payment Incomplete</CardTitle>
+              <CardDescription className="text-yellow-700">{message}</CardDescription>
+            </>
+          )}
+
+          {status === 'error' && (
+            <>
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
                 <XCircle className="h-12 w-12 text-red-600" />
               </div>
-              <CardTitle className="text-red-900">Payment Failed</CardTitle>
+              <CardTitle className="text-red-900">Verification Error</CardTitle>
               <CardDescription className="text-red-700">{message}</CardDescription>
             </>
           )}
@@ -66,6 +116,27 @@ function PaymentCallbackContent() {
 
         {status !== 'loading' && (
           <CardContent className="space-y-3">
+            {/* Payment Details */}
+            {status === 'success' && paymentDetails && (
+              <div className="rounded-lg border border-gray-200 p-4">
+                <p className="mb-2 text-sm font-medium text-gray-700">Payment Details</p>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Amount:</span>
+                    <span className="font-medium text-gray-900">
+                      {paymentDetails.currency} {paymentDetails.amount.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Reference:</span>
+                    <span className="font-mono text-xs text-gray-500">
+                      {paymentDetails.reference}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {status === 'success' && (
               <div className="rounded-lg bg-primary-50 p-4">
                 <p className="text-sm font-medium text-primary-900">
@@ -86,7 +157,7 @@ function PaymentCallbackContent() {
               </Link>
 
               {status === 'success' && (
-                <Link href="/certificates/my-certificates">
+                <Link href="/dashboard/certificates">
                   <Button variant="outline" className="w-full">
                     <FileText className="mr-2 h-4 w-4" />
                     View Certificates
@@ -94,7 +165,7 @@ function PaymentCallbackContent() {
                 </Link>
               )}
 
-              {status === 'failed' && (
+              {(status === 'failed' || status === 'error') && (
                 <Button variant="outline" className="w-full" onClick={() => router.back()}>
                   Try Again
                 </Button>

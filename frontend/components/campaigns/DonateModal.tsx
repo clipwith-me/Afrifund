@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -51,6 +51,26 @@ export function DonateModal({ open, onClose, campaign, onSuccess }: DonateModalP
 
   const quickAmounts = [10, 25, 50, 100, 250, 500];
 
+  // Handle ESC key to close modal
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open) {
+        onClose();
+      }
+    };
+
+    if (open) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [open, onClose]);
+
   const handleQuickAmount = (value: number) => {
     setSelectedAmount(value);
     setValue('amount', value);
@@ -94,20 +114,28 @@ export function DonateModal({ open, onClose, campaign, onSuccess }: DonateModalP
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="donate-modal-title"
+    >
       <div className="relative w-full max-w-2xl overflow-hidden rounded-lg bg-white shadow-xl">
         {/* Header */}
         <div className="border-b border-gray-200 bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Heart className="h-6 w-6" />
-              <h2 className="text-xl font-bold">Back This Campaign</h2>
+              <Heart className="h-6 w-6" aria-hidden="true" />
+              <h2 id="donate-modal-title" className="text-xl font-bold">
+                Back This Campaign
+              </h2>
             </div>
             <button
               onClick={onClose}
               className="rounded-full p-1 hover:bg-white/20 transition-colors"
+              aria-label="Close donation modal"
             >
-              <X className="h-6 w-6" />
+              <X className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
           <p className="mt-2 text-sm text-primary-100">
@@ -154,10 +182,11 @@ export function DonateModal({ open, onClose, campaign, onSuccess }: DonateModalP
 
             {/* Message */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label htmlFor="donation-message" className="mb-2 block text-sm font-medium text-gray-700">
                 Message to Creator (Optional)
               </label>
               <textarea
+                id="donation-message"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 rows={3}
                 placeholder="Share your thoughts or encouragement..."
