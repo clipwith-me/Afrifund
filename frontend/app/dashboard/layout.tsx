@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Button } from '@/components/ui/Button';
+import { Logo } from '@/components/ui/Logo';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import {
   LayoutDashboard,
@@ -70,12 +71,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex h-16 items-center justify-between border-b px-6">
-            <Link href="/" className="text-2xl font-bold text-primary-600">
-              AfriFund
+            <Link href="/">
+              <Logo variant="icon" iconClassName="h-8 w-8" />
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
               className="rounded-md p-2 hover:bg-gray-100 lg:hidden"
+              aria-label="Close sidebar"
             >
               <X className="h-5 w-5" />
             </button>

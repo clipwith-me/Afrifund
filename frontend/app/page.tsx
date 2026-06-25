@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Logo } from '@/components/ui/Logo';
 import { ArrowRight, Target, Users, Award, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { campaignsApi } from '@/lib/api/campaigns';
@@ -46,6 +47,17 @@ export default function HomePage() {
         {/* Hero Content */}
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
           <div className="text-center">
+            {/* Featured Logo */}
+            <div className="mb-8 flex justify-center">
+              <div className="inline-block rounded-2xl bg-white/10 backdrop-blur-sm px-8 py-6 shadow-2xl">
+                <Logo
+                  variant="full"
+                  iconClassName="h-16 w-16 sm:h-20 sm:w-20"
+                  textClassName="text-3xl sm:text-4xl text-white"
+                />
+              </div>
+            </div>
+
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
               Bring creative projects to life
             </h1>

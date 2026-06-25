@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Button } from '@/components/ui/Button';
+import { Logo, LogoCompact } from '@/components/ui/Logo';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { Menu, X, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
@@ -26,7 +27,12 @@ export function Navbar() {
         <div className="flex h-16 justify-between">
           <div className="flex">
             <Link href="/" className="flex flex-shrink-0 items-center">
-              <span className="text-2xl font-bold text-primary-600">AfriFund</span>
+              <div className="hidden md:block">
+                <Logo variant="full" />
+              </div>
+              <div className="md:hidden">
+                <LogoCompact />
+              </div>
             </Link>
             <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
               {navLinks.map((link) => (

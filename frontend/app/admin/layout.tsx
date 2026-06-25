@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Button } from '@/components/ui/Button';
+import { Logo } from '@/components/ui/Logo';
 import {
   LayoutDashboard,
   Briefcase,
@@ -85,12 +86,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex h-16 items-center justify-between border-b border-gray-800 px-6">
-            <Link href="/admin" className="text-2xl font-bold text-white">
-              AfriFund Admin
+            <Link href="/admin" className="flex items-center gap-2">
+              <Logo variant="icon" iconClassName="h-8 w-8" />
+              <span className="text-lg font-bold text-white">Admin</span>
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
               className="rounded-md p-2 text-gray-400 hover:bg-gray-800 hover:text-white lg:hidden"
+              aria-label="Close sidebar"
             >
               <X className="h-5 w-5" />
             </button>
