@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,14 +29,10 @@ const campaignSchema = z.object({
 
 type CampaignFormData = z.infer<typeof campaignSchema>;
 
-interface CampaignEditPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function CampaignEditPage({ params }: CampaignEditPageProps) {
+export default function CampaignEditPage() {
+  const params = useParams();
   const router = useRouter();
+  const campaignId = params?.id as string;
   const [campaign, setCampaign] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -51,13 +47,15 @@ export default function CampaignEditPage({ params }: CampaignEditPageProps) {
   });
 
   useEffect(() => {
-    loadCampaign();
-  }, [params.id]);
+    if (campaignId) {
+      loadCampaign();
+    }
+  }, [campaignId]);
 
   const loadCampaign = async () => {
     try {
       setLoading(true);
-      const response: any = await campaignsApi.getById(params.id);
+      const response: any = await campaignsApi.getById(campaignId);
       const campaignData = response.data;
       setCampaign(campaignData);
 
@@ -87,9 +85,9 @@ export default function CampaignEditPage({ params }: CampaignEditPageProps) {
   const onSubmit = async (data: CampaignFormData) => {
     setSubmitting(true);
     try {
-      await campaignsApi.update(params.id, data);
+      await campaignsApi.update(campaignId, data);
       toast.success('Campaign updated successfully!');
-      router.push(`/dashboard/campaigns/${params.id}`);
+      router.push(`/dashboard/campaigns/${campaignId}`);
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to update campaign');
     } finally {
@@ -149,7 +147,7 @@ export default function CampaignEditPage({ params }: CampaignEditPageProps) {
                   Active and completed campaigns are locked to maintain integrity.
                 </p>
                 <div className="mt-4">
-                  <Link href={`/dashboard/campaigns/${params.id}`}>
+                  <Link href={`/dashboard/campaigns/${campaignId}`}>
                     <Button variant="outline" size="sm">
                       View Campaign Analytics
                     </Button>
@@ -167,7 +165,7 @@ export default function CampaignEditPage({ params }: CampaignEditPageProps) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href={`/dashboard/campaigns/${params.id}`}>
+        <Link href={`/dashboard/campaigns/${campaignId}`}>
           <Button variant="outline" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
@@ -352,7 +350,7 @@ export default function CampaignEditPage({ params }: CampaignEditPageProps) {
 
         {/* Actions */}
         <div className="flex justify-end gap-4">
-          <Link href={`/dashboard/campaigns/${params.id}`}>
+          <Link href={`/dashboard/campaigns/${campaignId}`}>
             <Button type="button" variant="outline">
               Cancel
             </Button>

@@ -18,6 +18,7 @@ import {
   Plus,
   AlertCircle,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function DashboardOverviewPage() {
   const { user } = useAuthStore();
@@ -35,6 +36,7 @@ export default function DashboardOverviewPage() {
       setDashboardData(response.data);
     } catch (error) {
       console.error('Failed to load dashboard:', error);
+      toast.error('Failed to load dashboard data. Please refresh the page.');
     } finally {
       setLoading(false);
     }

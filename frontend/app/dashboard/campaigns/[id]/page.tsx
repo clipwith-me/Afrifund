@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -24,28 +24,26 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface CampaignAnalyticsPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function CampaignAnalyticsPage({ params }: CampaignAnalyticsPageProps) {
+export default function CampaignAnalyticsPage() {
   const router = useRouter();
+  const params = useParams();
+  const campaignId = params?.id as string;
   const [campaign, setCampaign] = useState<any>(null);
   const [pledges, setPledges] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadCampaignData();
-  }, [params.id]);
+    if (campaignId) {
+      loadCampaignData();
+    }
+  }, [campaignId]);
 
   const loadCampaignData = async () => {
     try {
       setLoading(true);
       const [campaignRes, pledgesRes] = await Promise.all([
-        campaignsApi.getById(params.id),
-        apiClient.get(`/pledges/campaign/${params.id}`),
+        campaignsApi.getById(campaignId),
+        apiClient.get(`/pledges/campaign/${campaignId}`),
       ]);
       setCampaign(campaignRes.data);
       setPledges(pledgesRes.data || []);
@@ -103,14 +101,15 @@ export default function CampaignAnalyticsPage({ params }: CampaignAnalyticsPageP
     avgPledge: pledges.length > 0 ? Number(campaign.amountRaised) / pledges.length : 0,
   };
 
-  const statusColor = {
+  const statusColorMap: Record<string, string> = {
     DRAFT: 'bg-gray-100 text-gray-800',
     PENDING_APPROVAL: 'bg-yellow-100 text-yellow-800',
     ACTIVE: 'bg-green-100 text-green-800',
     COMPLETED: 'bg-blue-100 text-blue-800',
     CANCELLED: 'bg-red-100 text-red-800',
     REJECTED: 'bg-red-100 text-red-800',
-  }[campaign.status] || 'bg-gray-100 text-gray-800';
+  };
+  const statusColor = statusColorMap[campaign.status] || 'bg-gray-100 text-gray-800';
 
   return (
     <div className="space-y-6">

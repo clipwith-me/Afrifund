@@ -11,7 +11,7 @@ export interface RegisterData {
   firstName: string;
   lastName: string;
   phone?: string;
-  role?: 'CREATOR' | 'BACKER' | 'MENTOR';
+  role?: 'CREATOR' | 'BACKER' | 'MENTOR' | 'ADMIN';
 }
 
 export interface AuthResponse {

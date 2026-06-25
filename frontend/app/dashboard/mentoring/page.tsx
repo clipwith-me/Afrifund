@@ -55,6 +55,7 @@ export default function MentoringDashboardPage() {
       }
     } catch (error) {
       console.error('Failed to load mentoring data:', error);
+      toast.error('Failed to load mentoring data. Please refresh the page.');
     } finally {
       setLoading(false);
     }

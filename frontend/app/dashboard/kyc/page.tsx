@@ -79,6 +79,7 @@ export default function KYCPage() {
       setKycStatus(response.data);
     } catch (error) {
       console.error('Failed to load KYC status:', error);
+      toast.error('Failed to load KYC status. Please try again.');
     } finally {
       setLoading(false);
     }

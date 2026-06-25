@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -22,14 +22,10 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface MentorProfilePageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function MentorProfilePage({ params }: MentorProfilePageProps) {
+export default function MentorProfilePage() {
   const router = useRouter();
+  const params = useParams();
+  const mentorId = params?.id as string;
   const { user, isAuthenticated } = useAuthStore();
   const [mentor, setMentor] = useState<any>(null);
   const [stats, setStats] = useState<any>(null);
@@ -37,15 +33,17 @@ export default function MentorProfilePage({ params }: MentorProfilePageProps) {
   const [showBookingModal, setShowBookingModal] = useState(false);
 
   useEffect(() => {
-    loadMentorData();
-  }, [params.id]);
+    if (mentorId) {
+      loadMentorData();
+    }
+  }, [mentorId]);
 
   const loadMentorData = async () => {
     try {
       setLoading(true);
       const [mentorRes, statsRes] = await Promise.all([
-        mentorsApi.getById(params.id),
-        mentorsApi.getStats(params.id).catch(() => ({ data: null })),
+        mentorsApi.getById(mentorId),
+        mentorsApi.getStats(mentorId).catch(() => ({ data: null })),
       ]);
       setMentor(mentorRes.data);
       setStats(statsRes.data);

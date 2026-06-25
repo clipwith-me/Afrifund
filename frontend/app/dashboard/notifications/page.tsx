@@ -34,7 +34,7 @@ export default function NotificationsPage() {
       setNotifications(response.data || []);
     } catch (error) {
       console.error('Failed to load notifications:', error);
-      toast.error('Failed to load notifications');
+      toast.error('Failed to load notifications. Please try again.');
     } finally {
       setLoading(false);
     }

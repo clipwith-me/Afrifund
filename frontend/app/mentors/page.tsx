@@ -24,7 +24,8 @@ export default function MentorsPage() {
       const response: any = await mentorsApi.getAll({ isActive: true });
       setMentors(response.data || []);
     } catch (error) {
-      console.error('Failed to load mentors:', error);
+      // Silent failure on public page - graceful fallback to empty state
+      setMentors([]);
     } finally {
       setLoading(false);
     }

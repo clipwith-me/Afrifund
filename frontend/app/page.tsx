@@ -22,7 +22,8 @@ export default function HomePage() {
       const response: any = await campaignsApi.getAll({ status: 'ACTIVE' });
       setFeaturedCampaigns(response.data?.slice(0, 3) || []);
     } catch (error) {
-      console.error('Failed to load campaigns:', error);
+      // Silent failure on homepage - graceful fallback to empty state
+      setFeaturedCampaigns([]);
     } finally {
       setLoading(false);
     }

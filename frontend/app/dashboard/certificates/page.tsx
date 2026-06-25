@@ -51,7 +51,7 @@ export default function CertificatesPage() {
       setCertificates(response.data || []);
     } catch (error) {
       console.error('Failed to load certificates:', error);
-      toast.error('Failed to load certificates');
+      toast.error('Failed to load certificates. Please try again.');
     } finally {
       setLoading(false);
     }

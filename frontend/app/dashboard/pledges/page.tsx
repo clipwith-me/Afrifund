@@ -76,7 +76,7 @@ export default function MyPledgesPage() {
       });
     } catch (error) {
       console.error('Failed to load pledges:', error);
-      toast.error('Failed to load pledges');
+      toast.error('Failed to load pledges. Please refresh the page.');
     } finally {
       setLoading(false);
     }
