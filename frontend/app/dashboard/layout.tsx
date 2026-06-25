@@ -16,6 +16,7 @@ import {
   X,
   CheckCircle,
   AlertCircle,
+  Users,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -23,6 +24,7 @@ const navigation = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { name: 'My Campaigns', href: '/dashboard/campaigns', icon: Briefcase },
   { name: 'My Pledges', href: '/dashboard/pledges', icon: Heart },
+  { name: 'Mentoring', href: '/dashboard/mentoring', icon: Users },
   { name: 'Certificates', href: '/dashboard/certificates', icon: Award },
   { name: 'Profile', href: '/dashboard/profile', icon: User },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
